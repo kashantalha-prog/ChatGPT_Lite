@@ -23,6 +23,7 @@ GEMINI_API_KEY=your_real_key_here
 GEMINI_MODEL=gemini-3.5-flash-lite
 PORT=3000
 HOST=127.0.0.1
+CORS_ORIGIN=*
 ```
 
 4. Start:
@@ -34,6 +35,21 @@ npm start
 5. Open:
 
 http://localhost:3000
+
+## GitHub Pages
+
+GitHub Pages can host the frontend files, but it cannot run `server.js` or keep the Gemini API key secret. The included GitHub Actions workflow publishes the `public` folder automatically.
+
+1. Push the repository to GitHub with the default branch named `main`.
+2. In GitHub, open **Settings > Pages** and choose **GitHub Actions** as the source.
+3. Deploy this Node backend separately on a Node host such as Render or Railway.
+4. Put that backend URL in `public/config.js`:
+
+```js
+window.CHATGPT_CONFIG = { backendUrl: 'https://your-backend.example.com' };
+```
+
+5. Push again and open the GitHub Pages URL. Do not put `GEMINI_API_KEY` in `public/config.js`.
 
 ## Important
 - Do NOT put the Gemini key in `index.html`.
