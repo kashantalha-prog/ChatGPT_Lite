@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: chatgpt-lite-api
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        value: "*"

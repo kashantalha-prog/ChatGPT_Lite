@@ -2,6 +2,7 @@ const $=id=>document.getElementById(id);
 const KEY='chatgpt-lite-gemini-v1';
 const LANG_KEY='chatgpt-lite-language';
 const API_BASE=(window.CHATGPT_CONFIG?.backendUrl||'').replace(/\/$/,'');
+const IS_GITHUB_PAGES=location.hostname.endsWith('github.io');
 let language=localStorage.getItem(LANG_KEY)||'en';
 let state=JSON.parse(localStorage.getItem(KEY)||'null')||{theme:'dark',chats:[],current:0};
 function t(key,values={}){let value=(window.CHATGPT_LOCALES[language]||window.CHATGPT_LOCALES.en)[key]||key;return Object.entries(values).reduce((text,[name,replacement])=>text.replaceAll(`{${name}}`,replacement),value);}
@@ -56,12 +57,13 @@ function autoSize(){const p=$('prompt');p.style.height='auto';p.style.height=Mat
 $('prompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});$('sendBtn').onclick=send;
 function fileToBase64(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file);});}
 async function callAI(text,files,history,signal){
+ if(IS_GITHUB_PAGES&&!API_BASE) throw new Error(t('backendNotConfigured'));
  const imageFiles=files.filter(f=>f.type.startsWith('image/')).slice(0,4);
  if(files.some(f=>!f.type.startsWith('image/'))) throw new Error(t('imageOnly'));
  const images=[];for(const f of imageFiles){if(f.size>10*1024*1024)throw new Error(t('imageTooLarge',{name:f.name}));images.push({name:f.name,data:await fileToBase64(f)});}
  const payload={message:text||t('analyzeImages'),history:history.slice(-20),images,think};
  const r=await fetch(`${API_BASE}/api/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal});
- let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||`Server error (${r.status})`);return d;
+ let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||t('backendError',{status:r.status}));return d;
 }
 async function send(){if(busy)return;const p=$('prompt'),text=p.value.trim();if(!text&&!attachments.length)return;const c=current();const fileNames=attachments.map(f=>f.name);c.messages.push({role:'user',content:text||t('analyzeImages'),attachments:fileNames});if(c.title==='New chat')c.title=(text||fileNames[0]||'Image chat').slice(0,40);p.value='';autoSize();save();render();busy=true;aborter=new AbortController();$('sendBtn').textContent='■';$('sendBtn').classList.add('stop');$('sendBtn').onclick=()=>aborter.abort();const filesNow=attachments;attachments=[];$('fileInput').value='';renderAttachmentHint();const typing=document.createElement('div');typing.className='msg';typing.innerHTML='<div class="msgAvatar">C</div><div class="msgBody"><div class="typing"><i></i><i></i><i></i></div></div>';$('messages').appendChild(typing);$('messages').scrollTop=$('messages').scrollHeight;
  try{const result=await callAI(text,filesNow,c.messages.slice(0,-1),aborter.signal);typing.remove();c.messages.push({role:'assistant',content:result.text||t('noResponse')});save();render();}
