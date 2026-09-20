@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChatGPT Lite</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebarTop"><button class="newChat" id="newChat"><span>＋</span><span data-i18n="newChat">New chat</span></button></div>
+    <button class="sideItem" id="searchBtn"><span class="sideIcon">⌕</span><span class="sideLabel" data-i18n="searchChats">Search chats</span></button>
+    <button class="sideItem" id="filesBtn"><span class="sideIcon">▱</span><span class="sideLabel" data-i18n="files">Files</span></button>
+    <div class="historyLabel" data-i18n="chats">Chats</div>
+    <div class="history" id="history"></div>
+    <div class="profile"><div class="avatar">YOU</div><div class="profileName" data-i18n="myAccount">My account</div><button class="profileMore" id="profileSettings">•••</button></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topLeft"><button class="iconBtn" id="menuToggle" aria-label="Open sidebar" data-i18n-aria-label="openSidebar">☰</button><div class="brand">ChatGPT Lite</div></div>
+      <div class="topRight"><button class="shareBtn" id="shareBtn">↗ <span data-i18n="share">Share</span></button><div class="menuWrap"><button class="iconBtn dotsBtn" id="dotsBtn" aria-label="More" data-i18n-aria-label="more">•••</button>
+        <div class="menu" id="moreMenu">
+          <button id="viewFiles">▱ <span data-i18n="viewFiles">View files in chat</span></button>
+          <button id="pinChat">⌑ <span data-i18n="pinChat">Pin chat</span></button>
+          <button id="archiveChat">▱ <span data-i18n="archive">Archive</span></button>
+          <button id="exportChat">⇩ <span data-i18n="exportChat">Export chat</span></button>
+          <div class="menuDivider"></div>
+          <button id="themeToggle">◐ <span data-i18n="theme">Dark / Light theme</span></button>
+          <button id="settingsBtn">⚙ <span data-i18n="settings">Settings</span></button>
+          <button id="deleteChat" class="danger">⌫ <span data-i18n="deleteChat">Delete chat</span></button>
+        </div>
+      </div></div>
+    </header>
+
+    <section class="chatArea">
+      <div class="messages" id="messages"></div>
+      <div class="composerArea">
+        <div class="composer">
+          <input id="fileInput" type="file" multiple hidden>
+          <button class="tool" id="attach" title="Attach files" data-i18n-title="attachFiles">＋</button>
+          <textarea id="prompt" rows="1" placeholder="Message ChatGPT Lite..." data-i18n-placeholder="messagePlaceholder"></textarea>
+          <button class="tool think" id="thinkBtn" title="Think mode" data-i18n-title="thinkMode">🧠</button>
+          <button class="tool" id="voiceBtn" title="Voice input" data-i18n-title="voiceInput">🎙</button>
+          <button class="send" id="sendBtn" title="Send" data-i18n-title="send">↑</button>
+        </div>
+        <div class="hint" data-i18n="hint">ChatGPT Lite can make mistakes. Check important information.</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modalBack" id="settingsModal">
+  <div class="modal">
+    <div class="modalHead"><h2 data-i18n="settings">Settings</h2><button class="close" id="closeSettings">×</button></div>
+    <div class="field"><label data-i18n="language">Language</label><select id="languageSelect"><option value="en">English</option><option value="ur">اردو</option><option value="roman-ur">Roman Urdu</option></select></div>
+    <div class="field"><label data-i18n="geminiApi">Gemini API</label><div class="status warn" data-i18n="apiNotice">Your Gemini API key is kept on the Node.js server. Put it in .env as GEMINI_API_KEY=...; never paste it into this browser.</div></div>
+    <div class="field"><label data-i18n="geminiModel">Gemini model</label><input value="gemini-3.5-flash-lite" disabled></div>
+    <div class="field"><label data-i18n="backend">Backend</label><div class="status ok">Node.js + Gemini API</div></div>
+    <div class="field"><label data-i18n="systemInstructions">System instructions</label><textarea id="instructions"></textarea></div>
+    <div class="status ok" id="apiStatus" data-i18n="apiStatus">Gemini responses and image analysis are handled by the secure Node.js backend.</div>
+    <div class="modalActions"><button class="secondary" id="cancelSettings" data-i18n="cancel">Cancel</button><button class="primary" id="saveSettings" data-i18n="save">Save</button></div>
+  </div>
+</div>
+
+<script src="/locales/en.js"></script>
+<script src="/locales/ur.js"></script>
+<script src="/locales/roman-ur.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
